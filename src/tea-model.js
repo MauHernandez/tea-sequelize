@@ -9,7 +9,37 @@ const Tea = db.define('tea', {
   price: Sequelize.INTEGER,
   category: Sequelize.ENUM('green', 'black', 'herbal')
 }, {
-  // add more functionality to our Tea model here!
+  getterMethods:{
+    dollarPrice: function(){
+      return '$'+String(this.price).charAt(0)+'.'+String(this.price).slice(1,3)
+    }
+  }, 
+  classMethods:{
+    findByCategory: function(category){
+      return Tea.findAll({
+        where:{
+          category: category
+        }
+      })
+    }
+  },
+  instanceMethods:{
+    findSimilar: function(){
+     return Tea.findAll({
+        where:{
+          category: this.category
+        }
+      }) 
+    }
+  },
+  hooks:{
+    afterCreate: function(){
+      return Tea.update(
+        {price: 425},
+        { where: {id:1} }
+        )
+    }
+  }
 })
 
 module.exports = Tea
