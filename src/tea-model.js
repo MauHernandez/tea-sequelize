@@ -1,7 +1,6 @@
 'use strict'
 
 const Sequelize = require('sequelize')
-const Promise = Sequelize.Promise;
 const db = require('./_db')
 
 const Tea = db.define('tea', {
