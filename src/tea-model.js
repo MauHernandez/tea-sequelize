@@ -1,6 +1,7 @@
 'use strict'
 
 const Sequelize = require('sequelize')
+const Promise = Sequelize.Promise;
 const db = require('./_db')
 
 const Tea = db.define('tea', {
@@ -11,9 +12,12 @@ const Tea = db.define('tea', {
 }, {
   getterMethods:{
     dollarPrice: function(){
-      return '$'+String(this.price).charAt(0)+'.'+String(this.price).slice(1,3)
+      let priceStr = String(this.price);
+      let length = priceStr.length;
+
+      return '$' + priceStr.slice(0, length-2) + '.' + priceStr.slice(length-2, length)
     }
-  }, 
+  },
   classMethods:{
     findByCategory: function(category){
       return Tea.findAll({
@@ -27,17 +31,24 @@ const Tea = db.define('tea', {
     findSimilar: function(){
      return Tea.findAll({
         where:{
-          category: this.category
+          category: this.category,
+          id: {
+            $ne: this.id
+          }
         }
-      }) 
+      })
     }
   },
   hooks:{
-    afterCreate: function(){
-      return Tea.update(
-        {price: 425},
-        { where: {id:1} }
-        )
+    afterCreate: function(newTea){
+      return Tea.findAll(
+        { where: {
+            id: { $ne: newTea.id }
+          }
+        })
+      .then(teas => teas.map(tea => tea.update({
+        price: tea.price - 100
+      })))
     }
   }
 })

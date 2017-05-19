@@ -44,7 +44,7 @@ describe('Tea Model', () => {
   describe('Hook', () => {
     it('should decrease the price of all teas already in the db every time you add a new one', () =>
       Tea.create({
-        name: 'Chai Tea',
+        title: 'Chai Tea',
         price: 1095,
         description: 'This ancient recipe of black tea spiced with Indian herbs and spices produces a warm, soothing drink that will soothe and satisfy.',
         category: 'black'
